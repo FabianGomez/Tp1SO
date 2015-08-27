@@ -1,5 +1,6 @@
 #include "tasks.h"
-#include <stdlib.h>   
+#include <stdlib.h> 
+#include <iostream>  
 //rand() % max + min; Random entre min y max
 using namespace std;
 
@@ -35,22 +36,42 @@ void TaskConsola(int pid,vector<int> params){
 	int max = params[2];
 
 	for(int i=0;i<n;i++){
-		int tiempo = rand() % max + min;
+		//int tiempo = rand() % max + min;
+		int tiempo = rand() % (max-min+1) + min;
 		uso_IO(pid,tiempo);//No estoy contando el tiempo de paso a bloqueo
 	}
 }
 
 void TaskBatch(int pid,vector<int> params){
+
 	int total_cpu=params[0];
 	int cant_bloqueos=params[1];
-	int rango_temp=total_cpu % cant_bloqueos;
-
-	for(int i=0;i<cant_bloqueos;i++){
-		int tiempo = rand() % (rango_temp-1);
-		uso_IO(pid, 1);
-		uso_CPU(pid,tiempo);
-		total_cpu = total_cpu - tiempo;
+	if(total_cpu < cant_bloqueos -1)
+	{
+		cout << "Error" << endl;
+		return;
 	}
-	if(total_cpu > 0)
-		uso_CPU(pid,total_cpu);
+
+	vector<bool> tiempos(total_cpu, false);
+	int i = 0; 
+	while(i < cant_bloqueos)
+	{
+		int idx = rand() % (total_cpu -1); //para que no pueda caer uno en el tiempo del exit
+		if(tiempos[idx] == true)
+			continue;
+		else
+		{
+			tiempos[idx] = true;
+			i++;
+		}
+	}
+
+
+	for(i = 0; i < total_cpu; i++)
+	{
+		if(tiempos[i] == true)
+			uso_IO(pid, 1);
+		else
+			uso_CPU(pid, 1);
+	}
 }
