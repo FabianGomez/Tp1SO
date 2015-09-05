@@ -4,10 +4,7 @@
 #include <vector>
 #include <queue>
 #include "basesched.h"
-enum State 
-{
-	Ready, Blocked, Running
-};
+
 using namespace std;
 
 
@@ -26,14 +23,14 @@ class SchedRR2 : public SchedBase {
 			int core;
 			State estado;
 
-			pcb(): pid(TASK_IDLE), core(-1), estado(Ready)
+			pcb(): pid(IDLE_TASK), core(-1), estado(Ready)
 			{}
 
 		};
 		vector<int> quantums;
 		vector<int> quantumsActuales;
 		
-		vector<std::queue<pcb>> colasxCore;
+		vector< std::queue<pcb> > colasxCore;
 		
 
 		vector<pcb> procesosActuales; //la pos i tiene el actual del core i

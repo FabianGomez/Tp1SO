@@ -5,8 +5,6 @@
 #include <queue>
 #include "basesched.h"
 
-// No se que querias hacer con esto.
-#define TASK_IDLE 0
 
 using namespace std;
 
@@ -26,7 +24,7 @@ class SchedRR : public SchedBase {
 			int core;
 			State estado;
 
-			pcb(): pid(TASK_IDLE), core(-1), estado(Ready)
+			pcb(): pid(IDLE_TASK), core(-1), estado(Ready)
 			{}
 
 		};
