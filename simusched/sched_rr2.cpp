@@ -11,7 +11,7 @@ SchedRR2::SchedRR2(vector<int> argn) {
 	int n = argn[0];
 	quantums = vector<int>(n,0);
 	quantumsActuales = vector<int>(n,0);
-	colasxCore = vector<std::queue<pcb>>(n);
+	colasxCore = vector< std::queue<pcb> >(n);
 	for(int i =1;i<n+1;i++){
 		quantums[i-1] = argn[i];
 		quantumsActuales[i-1] = argn[i];

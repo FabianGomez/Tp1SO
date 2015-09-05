@@ -4,10 +4,10 @@
 #include <vector>
 #include <queue>
 #include "basesched.h"
-enum State 
-{
-	Ready, Blocked, Running
-};
+
+// No se que querias hacer con esto.
+#define TASK_IDLE 0
+
 using namespace std;
 
 

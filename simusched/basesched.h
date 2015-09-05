@@ -6,6 +6,12 @@
 
 enum Motivo { TICK, BLOCK, EXIT };
 
+enum State 
+{
+	Ready, Blocked, Running
+};
+
+#define TASK_IDLE 0
 class SchedBase {
 	public:
 
