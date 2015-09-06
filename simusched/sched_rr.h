@@ -21,17 +21,16 @@ class SchedRR : public SchedBase {
 		struct pcb 
 		{
 			int pid;
-			int core;
 			State estado;
 
-			pcb(): pid(IDLE_TASK), core(-1), estado(Ready)
+			pcb(): pid(IDLE_TASK), estado(Ready)
 			{}
 
 		};
 		vector<int> quantums;
 		vector<int> quantumsActuales;
 		std::queue<pcb> cola;
-		vector<pcb> procesosActuales; //la pos i tiene el actual del core i
+		
 };
 
 #endif

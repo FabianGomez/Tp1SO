@@ -16,8 +16,7 @@ SchedRR::SchedRR(vector<int> argn) {
 		quantumsActuales[i-1] = argn[i];
 	}
 
-	procesosActuales = vector<pcb>(n, pcb());
-
+	
 
 }
 
@@ -29,10 +28,20 @@ SchedRR::~SchedRR() {
 void SchedRR::load(int pid) {
 	pcb p = pcb();
 	p.pid = pid;
+
 	cola.push(p);
 }
 
 void SchedRR::unblock(int pid) {
+	for(unsigned int i=0; i < cola.size();i++)
+		{
+			pcb p = cola.front();
+			if(p.pid == pid)
+				p.estado=Ready;
+
+			cola.pop();
+			cola.push(p);
+		}
 }
 
 int SchedRR::tick(int cpu, const enum Motivo m) {
@@ -45,31 +54,41 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 		quantumsActuales[cpu] = quantums[cpu];
 
 		// sobre el que decido.
-		pcb primero = procesosActuales[cpu];
+		pcb primero = pcb();
+		primero.pid = current_pid(cpu);
 
 		// se contempla tambien el caso vacio
 		unsigned int i = 0;
 		while(cola.front().estado == Blocked && i < cola.size())
 		{
-			pcb p = cola.front();cola.pop();
+			pcb p = cola.front();
+			cola.pop();
 			cola.push(p);
 			i++;
 		}
 
-		// me vuelvo a pushear, si me bloque
-		if (m == BLOCK)
-			cola.push(primero);
+		
+		
 
-		// reseteo
-		procesosActuales[cpu] = pcb();
 
-		if(i == cola.size())
+		if(i == cola.size()){
+			// me vuelvo a pushear, si me bloqueé
+			if (m == BLOCK){
+				primero.estado = Blocked;
+				cola.push(primero);
+			}
 			return IDLE_TASK;
+		}
 		else
 		{
-			procesosActuales[cpu] = cola.front();
+			// me vuelvo a pushear, si me bloqueé
+			if (m == BLOCK){
+				primero.estado = Blocked;
+				cola.push(primero);
+			}
+			pcb res = cola.front();
 			cola.pop();
-			return procesosActuales[cpu].pid;
+			return res.pid;
 		}
 
 	} else if (m == TICK)
@@ -83,7 +102,7 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 		else if(cola.size() > 0 && current_pid(cpu) == IDLE_TASK)
 		{
 			//Hay alguien en la cola. Tengo que ver si hay alguien ready
-			int i = 0;
+			unsigned int i = 0;
 			while(cola.front().estado == Blocked && i < cola.size())
 			{
 				pcb p = cola.front();
@@ -97,9 +116,9 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 			else
 			{
 				quantumsActuales[cpu] = quantums[cpu];
-				procesosActuales[cpu] = cola.front();
+				pcb res = cola.front();
 				cola.pop();
-				return procesosActuales[cpu].pid;
+				return res.pid;
 			}
 		}
 		else if(cola.size() == 0 && current_pid(cpu) != IDLE_TASK)
@@ -115,7 +134,7 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 			//Hay alguien en la cola y no estoy corriendo la idle.
 			if(quantumsActuales[cpu] == 0)
 			{
-				int i = 0;
+				unsigned int i = 0;
 				while(cola.front().estado == Blocked && i < cola.size())
 				{
 					pcb p = cola.front();
@@ -129,14 +148,17 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 					return current_pid(cpu);
 				else
 				{
-					procesosActuales[cpu] = cola.front();
+					pcb actual = pcb();
+					actual.pid = current_pid(cpu);
+					cola.push(actual); 
+					pcb res = cola.front();
 					cola.pop();
-					return procesosActuales[cpu].pid;
+					return res.pid;
 				}
 
 			}
 			//No se me termino el quantum, sigo corriendo
-			return procesosActuales[cpu].pid;
+			return current_pid(cpu);
 		}
 	}
 	

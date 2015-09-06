@@ -66,6 +66,22 @@ void TaskBatch(int pid,vector<int> params){
 	}
 }
 
+void TaskHarcodeada(int pid,vector<int> params){
+	uso_CPU(pid, 10);
+	uso_IO(pid, 2);
+	uso_CPU(pid, 8);
+	//uso_IO(pid, 5);
+	uso_CPU(pid, 100);
+	//uso_IO(pid, 9)
+}
+
+void TaskHarcodeada1(int pid,vector<int> params){
+	uso_CPU(pid, 25);
+	uso_IO(pid, 20);
+	uso_CPU(pid, 25);
+}
+
+
 
 void tasks_init(void) {
 	/* Todos los tipos de tareas se deben registrar acá para poder ser usadas.
@@ -76,4 +92,6 @@ void tasks_init(void) {
 	register_task(TaskAlterno, -1);
 	register_task(TaskConsola, 3);
 	register_task(TaskBatch, 2);
+	register_task(TaskHarcodeada, 0);
+	register_task(TaskHarcodeada1, 0);
 }

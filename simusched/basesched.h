@@ -8,7 +8,7 @@ enum Motivo { TICK, BLOCK, EXIT };
 
 enum State 
 {
-	Ready, Blocked, Running
+	Ready, Blocked
 };
 
 class SchedBase {

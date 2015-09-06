@@ -33,7 +33,6 @@ class SchedRR2 : public SchedBase {
 		vector< std::queue<pcb> > colasxCore;
 		
 
-		vector<pcb> procesosActuales; //la pos i tiene el actual del core i
 };
 
 #endif
