@@ -8,28 +8,27 @@ using namespace std;
 
 SchedNoMistery::SchedNoMistery(vector<int> argn) {  
 
-	/*quantums = vector<int>(argn.size()+ 1,0);
-	quantums[0]=1; // por defecto
-	for(unsigned int i=1;i<quantums.size();i++){
-		quantums[i]=argn[i-1];
-	}*/
 	quantums = vector<int>(argn);
 	quantumActual = quantums[0];
 	index=0;
 	procesos=0;
+
+	quantumBloqueados = map<unsigned int, unsigned int>();
 	cola.clear();
-	//quantumBloqueados.clear();
 }
 
 void SchedNoMistery::load(int pid) {  
+	//creo una nueva pcb para el proceso
 	pcb p = pcb();
 	p.pid = pid;
-
+	//lo encolo al final
 	cola.push_back(p);
+	//aumento la cantidad de procesos Ready o Running
 	procesos++;
 }
 
-void SchedNoMistery::unblock(int pid) {
+void SchedNoMistery::unblock(int pid) 
+{
 
 	//cout << "ME DESBLOQUEO " << pid << endl;
 
@@ -41,13 +40,15 @@ void SchedNoMistery::unblock(int pid) {
 
     //cout << "FRONT " << cola.front().pid << endl;
 
-    // aparecio uno nuevo en la ronda.
+    // le sumamos 2 porque al desbloquearse va a correr una vez, y luego va correr otra vez, siguiendo la ronda
     procesos = procesos + 2;
 
     // cuando se bloquee no lo vamos a almacenar
     // sabemos que cuando se desbloquee irrumpe en el orden.
 }
 
+
+// Obtiene el valor del quantum especial que toma el proceso al ejecutarse luego de un bloqueo
 void SchedNoMistery::cambiarQuantum(unsigned int pid)
 {
 	std::map<unsigned int, unsigned int>::iterator it;
@@ -98,7 +99,7 @@ int SchedNoMistery::tick(int cpu, const enum Motivo m) {
 		// Cuando se desbloquee se lo pushea primero ready.
 
 		if (m == BLOCK)
-			quantumBloqueados[0] = 0;
+			quantumBloqueados[current_pid(cpu)] = index > 0 ? index-1 : index;
 
 		if(0 == cola.size()){
 			return IDLE_TASK;
