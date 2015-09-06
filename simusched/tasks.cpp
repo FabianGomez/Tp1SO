@@ -74,7 +74,20 @@ void TaskHarcodeada(int pid,vector<int> params){
 	uso_CPU(pid, 100);
 	//uso_IO(pid, 9)
 }
-
+void TMaunsi(int pid,vector<int> params)
+{
+	uso_CPU(pid, 10);
+	uso_IO(pid, 5);
+	uso_CPU(pid, 10);
+	uso_IO(pid, 5);
+	uso_CPU(pid, 10);
+	uso_IO(pid, 5);
+	uso_CPU(pid, 10);
+	uso_IO(pid, 5);
+	uso_CPU(pid, 10);
+	uso_CPU(pid, 10);
+	uso_CPU(pid, 10);
+}
 void TaskHarcodeada1(int pid,vector<int> params){
 	uso_CPU(pid, 25);
 	uso_IO(pid, 20);
@@ -94,4 +107,5 @@ void tasks_init(void) {
 	register_task(TaskBatch, 2);
 	register_task(TaskHarcodeada, 0);
 	register_task(TaskHarcodeada1, 0);
+	register_task(TMaunsi, 0);
 }

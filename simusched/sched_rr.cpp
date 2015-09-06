@@ -25,39 +25,43 @@ SchedRR::~SchedRR() {
 }
 
 
-void SchedRR::load(int pid) {
+void SchedRR::load(int pid) 
+{
+	//creamos una nueva pcb para la tarea
 	pcb p = pcb();
 	p.pid = pid;
-
+	//la encolamos
 	cola.push(p);
 }
 
-void SchedRR::unblock(int pid) {
+void SchedRR::unblock(int pid) 
+{
+	//recorremos la cola hasta dar una vuelta completa, para no alterar el orden de los procesos
 	for(unsigned int i=0; i < cola.size();i++)
 		{
 			pcb p = cola.front();
 			if(p.pid == pid)
-				p.estado=Ready;
-
+				p.estado=Ready;//como se desbloqueo le cambiamos el estado
 			cola.pop();
 			cola.push(p);
 		}
+	//la cola queda exactamente igual, a excepcion del estado de la tarea que se desbloqueo
 }
 
 int SchedRR::tick(int cpu, const enum Motivo m) {
-	// EN COLA NO SON LOS QUE SE ESTAN EJECUTANDO
-	// PARA ESO ESTA procesosActuales!!!!!
 
 	if( m == EXIT || m == BLOCK) 
 	{
-		// reseteamos el quantum
+		// reseteamos el quantum para que el proximo proceso que corra lo pueda usar todo
 		quantumsActuales[cpu] = quantums[cpu];
 
-		// sobre el que decido.
+		// creo una pcb para la tarea que me llamo
 		pcb primero = pcb();
 		primero.pid = current_pid(cpu);
 
 		// se contempla tambien el caso vacio
+		
+		// recorro la cola hasta encontrar un proceso bloqueado, o hasta que la haya recorrida toda
 		unsigned int i = 0;
 		while(cola.front().estado == Blocked && i < cola.size())
 		{
@@ -67,11 +71,9 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 			i++;
 		}
 
-		
-		
-
 
 		if(i == cola.size()){
+			// no encontre un proceso que estuviera Ready
 			// me vuelvo a pushear, si me bloqueé
 			if (m == BLOCK){
 				primero.estado = Blocked;
@@ -81,6 +83,7 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 		}
 		else
 		{
+			// encontre un proceso Ready
 			// me vuelvo a pushear, si me bloqueé
 			if (m == BLOCK){
 				primero.estado = Blocked;
@@ -93,8 +96,7 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 
 	} else if (m == TICK)
 	{
-		
-
+		//trascurrio un tick, entonces decremento quantumsActuales
 		quantumsActuales[cpu]--; //Si estoy en la idle me puede dar negativo, pero no importa porque lo piso
 		if (cola.size() == 0 && current_pid(cpu) == IDLE_TASK)
 			//No hay nadie para correr, sigo con la idle
@@ -161,7 +163,7 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 			return current_pid(cpu);
 		}
 	}
-	
-	return 0;
+	// no deberia llegar nunca aca
+	return IDLE_TASK;
 }
 
