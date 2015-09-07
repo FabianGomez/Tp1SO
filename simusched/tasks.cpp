@@ -67,7 +67,7 @@ void TaskBatch(int pid,vector<int> params){
 }
 
 // utilizada para testear la Mistery
-void TaskHarcodeada1(int pid,vector<int> params){
+void TaskHardcodeada1(int pid,vector<int> params){
 	uso_CPU(pid, 25);
 	uso_IO(pid, 20);
 	uso_CPU(pid, 25);
@@ -82,5 +82,5 @@ void tasks_init(void) {
 	register_task(TaskAlterno, -1);
 	register_task(TaskConsola, 3);
 	register_task(TaskBatch, 2);
-	register_task(TaskHarcodeada1, 0);
+	register_task(TaskHardcodeada1, 0);
 }
