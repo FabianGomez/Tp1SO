@@ -1,3 +1,10 @@
-TaskCPU 100
-TaskCPU 100
-TaskCPU 100
+TaskIO 0 30
+TaskCPU 30
+TaskIO 0 30
+TaskCPU 30
+TaskIO 0 30
+TaskIO 0 30
+TaskCPU 30
+TaskIO 0 30
+TaskCPU 30
+TaskIO 0 30

@@ -42,8 +42,9 @@ ejercicio6:
 ejercicio8:
 	./simusched TaskEjercicio8_migracion.tsk 2 1 10 SchedRR2 5 5 | python graphsched.py > ../res/Ejercicio8_migracion_1.png
 	./simusched TaskEjercicio8_migracion.tsk 2 1 10 SchedRR 5 5 | python graphsched.py > ../res/Ejercicio8_migracion_2.png
-	./simusched TaskEjercicio8_sinmigracion.tsk 2 1 0 SchedRR 5 5 | python graphsched.py > ../res/Ejercicio8_sinmigracion_1.png
-	./simusched TaskEjercicio8_sinmigracion.tsk 2 1 0 SchedRR2 5 5 | python graphsched.py > ../res/Ejercicio8_sinmigracion_2.png
+	./simusched TaskEjercicio8_sinmigracion.tsk 2 1 0 SchedRR2 10 10 | python graphsched.py > ../res/ejercicio8_sinmigracion1.png
+	./simusched TaskEjercicio8_sinmigracion.tsk 2 1 30 SchedRR 10 10 | python graphsched.py > ../res/ejercicio8_sinmigracion2.png
+
 ejercicios: ejercicio1 ejercicio2 ejercicio3 ejercicio4 ejercicio5 ejercicio6 ejercicio8
 
 new: clean all
