@@ -36,7 +36,7 @@ void TaskBatch(int pid,vector<int> params){
 
 	int total_cpu=params[0];
 	int cant_bloqueos=params[1];
-	if(total_cpu < cant_bloqueos -1)
+	if(total_cpu <= cant_bloqueos)
 	{
 		cout << "Error" << endl;
 		return;
