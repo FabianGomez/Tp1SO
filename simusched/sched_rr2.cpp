@@ -48,17 +48,29 @@ void SchedRR2::load(int pid) {
 
 void SchedRR2::unblock(int pid)
 {
+	pcb bloqueado;
+	int indice = -1;
 	for(unsigned int i = 0; i < colasxCore.size(); i++)
 	{
-		pcb bloqueado;
+		
 		for(unsigned int j = 0; j < colasxCore[i].size(); j++)
 		{
 			pcb p = colasxCore[i].front();
 			colasxCore[i].pop();
 			if(p.pid == pid)
+			{
 				bloqueado=p;
+				indice = i;
+			}
 			else
 				colasxCore[i].push(p);
+		}
+
+		if (indice != -1)
+		{
+			bloqueado.estado=Ready;
+			colasxCore[indice].push(bloqueado);
+			break;
 		}
 		
 	}
