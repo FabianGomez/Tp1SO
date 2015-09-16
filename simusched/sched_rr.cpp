@@ -36,16 +36,22 @@ void SchedRR::load(int pid)
 
 void SchedRR::unblock(int pid) 
 {
-	//recorremos la cola hasta dar una vuelta completa, para no alterar el orden de los procesos
+	//recorremos la cola hasta dar una vuelta completa, para no alterar el orden de los procesos, y encolamos el desbloqueado atras de todo
+	pcb bloqueado;
 	for(unsigned int i=0; i < cola.size();i++)
 		{
 			pcb p = cola.front();
-			if(p.pid == pid)
-				p.estado=Ready;//como se desbloqueo le cambiamos el estado
+			//como se desbloqueo le cambiamos el estado
 			cola.pop();
-			cola.push(p);
+			
+			if(p.pid == pid)
+				bloqueado=p;
+			else
+				cola.push(p);
 		}
-	//la cola queda exactamente igual, a excepcion del estado de la tarea que se desbloqueo
+	//la cola queda exactamente igual
+	bloqueado.estado=Ready;
+	cola.push(bloqueado);
 }
 
 int SchedRR::tick(int cpu, const enum Motivo m) {

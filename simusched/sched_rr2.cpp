@@ -50,14 +50,17 @@ void SchedRR2::unblock(int pid)
 {
 	for(unsigned int i = 0; i < colasxCore.size(); i++)
 	{
+		pcb bloqueado;
 		for(unsigned int j = 0; j < colasxCore[i].size(); j++)
 		{
 			pcb p = colasxCore[i].front();
-			if(p.pid == pid)
-				p.estado = Ready;
 			colasxCore[i].pop();
-			colasxCore[i].push(p);
+			if(p.pid == pid)
+				bloqueado=p;
+			else
+				colasxCore[i].push(p);
 		}
+		
 	}
 }
 
