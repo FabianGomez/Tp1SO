@@ -38,7 +38,8 @@ void SchedRR::unblock(int pid)
 {
 	//recorremos la cola hasta dar una vuelta completa, para no alterar el orden de los procesos, y encolamos el desbloqueado atras de todo
 	pcb bloqueado;
-	for(unsigned int i=0; i < cola.size();i++)
+	int size = cola.size();
+	for(unsigned int i=0; i < size;i++)
 		{
 			pcb p = cola.front();
 			//como se desbloqueo le cambiamos el estado

@@ -52,8 +52,8 @@ void SchedRR2::unblock(int pid)
 	int indice = -1;
 	for(unsigned int i = 0; i < colasxCore.size(); i++)
 	{
-		
-		for(unsigned int j = 0; j < colasxCore[i].size(); j++)
+		int size = colasxCore[i].size();
+		for(unsigned int j = 0; j < size; j++)
 		{
 			pcb p = colasxCore[i].front();
 			colasxCore[i].pop();
