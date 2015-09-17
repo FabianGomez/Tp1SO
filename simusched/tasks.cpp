@@ -73,6 +73,13 @@ void TaskHardcodeada1(int pid,vector<int> params){
 	uso_CPU(pid, 25);
 }
 
+void TaskMistery(int pid,vector<int> params)
+{
+	uso_CPU(pid, 2);
+	uso_IO(pid, 6);
+	uso_CPU(pid, 30);
+}
+
 void tasks_init(void) {
 	/* Todos los tipos de tareas se deben registrar acá para poder ser usadas.
 	 * El segundo parámetro indica la cantidad de parámetros que recibe la tarea
@@ -83,4 +90,5 @@ void tasks_init(void) {
 	register_task(TaskConsola, 3);
 	register_task(TaskBatch, 2);
 	register_task(TaskHardcodeada1, 0);
+	register_task(TaskMistery, 0);
 }

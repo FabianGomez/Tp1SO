@@ -17,18 +17,22 @@ class SchedNoMistery : public SchedBase {
   	struct pcb;
 
 	std::vector<int> quantums; //Los quantums de entrada
+	std::vector<int> quantumsActuales; // En la posicion i es el quantum restante para el proceso i.
 	std::deque<pcb> cola; //Procesos que no se estan ejecutando
-	unsigned int index; //Indice de quantums
+	std::vector<int> indices; // En la posicion i se encuentra el indice del proceso i en quantums
+
+	/*unsigned int index; //Indice de quantums
 	unsigned int procesos; //Cantidad de procesos a ejecutar(no Bloqueados, Ready)
 	unsigned int quantumActual; //Ticks restantes del proceso actual
 	std::map<unsigned int,unsigned int> quantumBloqueados;
-	void cambiarQuantum(unsigned int pid);
+	void cambiarQuantum(unsigned int pid);*/
+
   	struct pcb 
 	{
 		int pid;
 		State estado;
-
-		pcb(): pid(IDLE_TASK), estado(Ready)
+		//bool descartable;
+		pcb(): pid(IDLE_TASK), estado(Ready), descartable(false)
 		{}
 
 	};

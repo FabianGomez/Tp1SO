@@ -9,11 +9,10 @@ using namespace std;
 SchedNoMistery::SchedNoMistery(vector<int> argn) {  
 
 	quantums = vector<int>(argn);
-	quantumActual = quantums[0];
-	index=0;
-	procesos=0;
+	
+	indices = vector<int>();
+	quantumsActuales = vector<int>();
 
-	quantumBloqueados = map<unsigned int, unsigned int>();
 	cola.clear();
 }
 
@@ -21,35 +20,33 @@ void SchedNoMistery::load(int pid) {
 	//creo una nueva pcb para el proceso
 	pcb p = pcb();
 	p.pid = pid;
-	//lo encolo al final
+	//lo encolo
+	// FIJARSE QUE PUEDE SER PUSH FRONT.
 	cola.push_back(p);
-	//aumento la cantidad de procesos Ready o Running
-	procesos++;
+
+	// le asignamos
+	indices.push_back(0);
+	quantumsActuales.push_back(quantums[0]);
 }
 
 void SchedNoMistery::unblock(int pid) 
 {
-
-	//cout << "ME DESBLOQUEO " << pid << endl;
-
     pcb p = pcb();
     p.pid = pid; // esta en ready incialmente.
+
+    //cola.push_back(p);
+
 
     // gana maxima prioridad.
     cola.push_front(p);
 
-    //cout << "FRONT " << cola.front().pid << endl;
-
-    // le sumamos 2 porque al desbloquearse va a correr una vez, y luego va correr otra vez, siguiendo la ronda
-    procesos = procesos + 2;
-
-    // cuando se bloquee no lo vamos a almacenar
-    // sabemos que cuando se desbloquee irrumpe en el orden.
+    indices[pid] = 0;
+    quantumsActuales[pid] = quantums[0];
 }
 
 
 // Obtiene el valor del quantum especial que toma el proceso al ejecutarse luego de un bloqueo
-void SchedNoMistery::cambiarQuantum(unsigned int pid)
+/*void SchedNoMistery::cambiarQuantum(unsigned int pid)
 {
 	std::map<unsigned int, unsigned int>::iterator it;
 
@@ -67,7 +64,8 @@ void SchedNoMistery::cambiarQuantum(unsigned int pid)
   	}
 
 
-}
+}*/
+
 
 int SchedNoMistery::tick(int cpu, const enum Motivo m) {  
 
@@ -77,29 +75,9 @@ int SchedNoMistery::tick(int cpu, const enum Motivo m) {
 	{
 		// si hace exit o se desaloja por estar bloqueado hay que resetear el quantum.
 
-		// reseteamos el quantum
-
-		procesos--;
-			// mantenemos el mismo.
-				// tenemos que resetear procesos.
-		if(procesos == 0)
-		{
-			procesos = cola.size();
-			// se termino una ronda
-			index = index < quantums.size() -1 ? index+1 : index;
-				
-		}
-
-		quantumActual = quantums[index];
-		// sobre el que decido.
-		//pcb primero = pcb();
-		//primero.pid = current_pid(cpu);
 
 		// En este scheduler no es necesario pushearse si se bloqueo
 		// Cuando se desbloquee se lo pushea primero ready.
-
-		if (m == BLOCK)
-			quantumBloqueados[current_pid(cpu)] = index > 0 ? index-1 : index;
 
 		if(0 == cola.size()){
 			return IDLE_TASK;
@@ -113,63 +91,62 @@ int SchedNoMistery::tick(int cpu, const enum Motivo m) {
 
 	} else if (m == TICK)
 	{
-		quantumActual--; //Si estoy en la idle me puede dar negativo, pero no importa porque lo piso
+		if (current_pid(cpu) != -1)
+			quantumsActuales[current_pid(cpu)]--;
 		
 		if (cola.size() == 0 && current_pid(cpu) == IDLE_TASK)
 			//No hay nadie para correr, sigo con la idle
 			return current_pid(cpu);
 		else if(cola.size() > 0 && current_pid(cpu) == IDLE_TASK)
 		{
-			//Hay alguien en la cola. Tengo que ver si hay alguien ready
+			//Hay alguien en la cola. 
 		
-			procesos = cola.size();
-			quantumActual = quantums[index];
-
 			pcb res = cola.front();
 			cola.pop_front();
 
-			cambiarQuantum(res.pid);
 			return res.pid;
 		}
 		else if(cola.size() == 0 && current_pid(cpu) != IDLE_TASK)
 		{
+			int pid = current_pid(cpu);
 			//No hay nadie esperando, solo tengo que verificar si hay que resetear el quantum
-			//cout << "ANTES DE DESBLOQUEARSE " << quantumActual<<  endl;
-			if(quantumActual == 0)
+			if(quantumsActuales[pid] == 0)
 			{
-				index = index < quantums.size()-1 ? index+1 : index;
-				quantumActual = quantums[index];
-				procesos = 1;
+				indices[pid] = indices[pid] < quantums.size()-1 ? indices[pid]+1 : indices[pid];
+				quantumsActuales[pid] = quantums[indices[pid]];
 			}
 
-			cambiarQuantum(current_pid(cpu));
-			return current_pid(cpu);
+			return pid;
 		}
 		else
 		{
-			//cout << "CAMBIO DE TAREAS " << quantumActual << endl;
+			int pid = current_pid(cpu);
 			//Hay alguien en la cola y no estoy corriendo la idle.
-			if(quantumActual == 0)
+			if(quantumsActuales[pid] == 0)
 			{
-				//cout << "ACTUAL ES  " << current_pid(cpu) << endl;
-
-				procesos--;
-
-				index = procesos == 0 && index < quantums.size()-1 ? index+1 : index;
-
-				procesos = procesos == 0 ? cola.size() + 1 : procesos;
-				quantumActual = quantums[index];
+				indices[pid] = indices[pid] < quantums.size()-1 ? indices[pid]+1 : indices[pid];
+				quantumsActuales[pid] = quantums[indices[pid]];
 
 				pcb res = cola.front();
 				cola.pop_front();
 
-				//cout << "RES es " << res.pid << endl;
+				// me busco si estoy pusheado.
 
-				pcb actual = pcb();
-				actual.pid = current_pid(cpu);
-				cola.push_back(actual); 
+				/*bool estoy = false;
+				for(unsigned int i=0; i < cola.size();i++)
+				{
+					pcb p = cola.front();
+					if (!estoy)
+						estoy = p.pid == current_pid(cpu);
+					cola.pop();
+					cola.push(p);
+				}*/
 
-				cambiarQuantum(res.pid);
+				//if (!estoy){
+					pcb actual = pcb();
+					actual.pid = current_pid(cpu);
+					cola.push_back(actual); 
+				//}
 				return res.pid;
 
 			}
@@ -178,7 +155,7 @@ int SchedNoMistery::tick(int cpu, const enum Motivo m) {
 			return current_pid(cpu);
 		}
 	}
-	
 	return 0;
 
 }
+
