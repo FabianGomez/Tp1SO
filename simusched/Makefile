@@ -33,6 +33,7 @@ ejercicio3:
 	./simusched lotes/TaskEjercicio3.tsk 1 1 0 SchedFCFS | python graphsched.py > ../res/ej_3_test.png
 ejercicio4:
 	./simusched lotes/testej4.tsk 2 1 0 SchedRR 3 3 | python graphsched.py > ../res/ej_4_test_2c_3t.png
+	./simusched lotes/TaskEjercicio4.tsk 1 1 0 SchedRR 5| python graphsched.py > ../res/TaskEjercicio4.png
 ejercicio5: 
 	./simusched lotes/TaskEjercicio5.tsk 1 2 0 SchedRR 10 | python graphsched.py > ../res/ej_5_test_10.png
 	./simusched lotes/TaskEjercicio5.tsk 1 2 0 SchedRR 2 | python graphsched.py > ../res/ej_5_test_2.png
@@ -43,6 +44,9 @@ ejercicio7:
 	./simusched lotes/tasktestej7.tsk 1 1 0 SchedMistery 2 5 7 8 15 2 4 5 | python graphsched.py > ../res/ejercicio7_1.png
 	./simusched lotes/tasktestej7.tsk 1 1 0 SchedMistery 10 | python graphsched.py > ../res/ejercicio7_2.png
 	./simusched lotes/taskHardcodeada1.tsk 1 1 0 SchedMistery 5 3 2 13 7 4| python graphsched.py > ../res/ejercicio7_3.png
+	./simusched lotes/TaskEjercicio7.tsk 1 1 0 SchedNoMistery 10 20 30 40 | python graphsched.py > ../res/TaskEjercicio7Nuestro.png
+	./simusched lotes/TaskEjercicio7.tsk 1 1 0 SchedMistery 10 20 30 40 | python graphsched.py > ../res/TaskEjercicio7.png
+
 ejercicio8:
 	./simusched lotes/TaskEjercicio8_migracion.tsk 2 1 10 SchedRR2 5 5 | python graphsched.py > ../res/Ejercicio8_migracion_1.png
 	./simusched lotes/TaskEjercicio8_migracion.tsk 2 1 10 SchedRR 5 5 | python graphsched.py > ../res/Ejercicio8_migracion_2.png
