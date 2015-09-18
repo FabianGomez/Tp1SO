@@ -17,9 +17,14 @@ class SchedNoMistery : public SchedBase {
   	struct pcb;
 
 	std::vector<int> quantums; //Los quantums de entrada
-	std::vector<int> quantumsActuales; // En la posicion i es el quantum restante para el proceso i.
-	std::deque<pcb> cola; //Procesos que no se estan ejecutando
-	std::vector<int> indices; // En la posicion i se encuentra el indice del proceso i en quantums
+  	std::vector< std::queue<pcb> > colas; // una cola por quantum del input
+ 	std::vector<int> indices; // indice que indica en que cola esta cada proceso.
+ 	std::vector<int> quantumsActuales; // En la posicion i es el quantum restante para el proceso i.
+
+ 	int proxAEjecutar();
+ 	int proximaColaConElementos();
+	//std::deque<pcb> cola; //Procesos que no se estan ejecutando
+	//std::vector<int> indices; // En la posicion i se encuentra el indice del proceso i en quantums
 
 	/*unsigned int index; //Indice de quantums
 	unsigned int procesos; //Cantidad de procesos a ejecutar(no Bloqueados, Ready)
@@ -31,8 +36,7 @@ class SchedNoMistery : public SchedBase {
 	{
 		int pid;
 		State estado;
-		//bool descartable;
-		pcb(): pid(IDLE_TASK), estado(Ready), descartable(false)
+		pcb(): pid(IDLE_TASK), estado(Ready)
 		{}
 
 	};
