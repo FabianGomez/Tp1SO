@@ -55,6 +55,18 @@ void SchedRR::unblock(int pid)
 	cola.push(bloqueado);
 }
 
+unsigned int SchedRR::siguiente()
+{
+	unsigned int i = 0;
+	while(cola.front().estado == Blocked && i < cola.size())
+	{
+		pcb p = cola.front();
+		cola.pop();
+		cola.push(p);
+		i++;
+	}
+	return i;
+}
 int SchedRR::tick(int cpu, const enum Motivo m) {
 
 	if( m == EXIT || m == BLOCK) 
@@ -69,16 +81,7 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 		// se contempla tambien el caso vacio
 		
 		// recorro la cola hasta encontrar un proceso bloqueado, o hasta que la haya recorrida toda
-		unsigned int i = 0;
-		while(cola.front().estado == Blocked && i < cola.size())
-		{
-			pcb p = cola.front();
-			cola.pop();
-			cola.push(p);
-			i++;
-		}
-
-
+		unsigned int i = siguiente();
 		if(i == cola.size()){
 			// no encontre un proceso que estuviera Ready
 			// me vuelvo a pushear, si me bloqueé
@@ -111,14 +114,7 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 		else if(cola.size() > 0 && current_pid(cpu) == IDLE_TASK)
 		{
 			//Hay alguien en la cola. Tengo que ver si hay alguien ready
-			unsigned int i = 0;
-			while(cola.front().estado == Blocked && i < cola.size())
-			{
-				pcb p = cola.front();
-				cola.pop();
-				cola.push(p);
-				i++;
-			}
+			unsigned int i = siguiente();
 			if(i == cola.size())
 				//No hay nadie ready, le toca al proceso actual de nuevo
 				return current_pid(cpu);
@@ -143,14 +139,7 @@ int SchedRR::tick(int cpu, const enum Motivo m) {
 			//Hay alguien en la cola y no estoy corriendo la idle.
 			if(quantumsActuales[cpu] == 0)
 			{
-				unsigned int i = 0;
-				while(cola.front().estado == Blocked && i < cola.size())
-				{
-					pcb p = cola.front();
-					cola.pop();
-					cola.push(p);
-					i++;
-				}
+				unsigned int i = siguiente();
 				quantumsActuales[cpu] = quantums[cpu];
 				if(i == cola.size())
 					//No hay nadie mas ready, le toca al proceso actual de nuevo

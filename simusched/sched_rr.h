@@ -30,6 +30,7 @@ class SchedRR : public SchedBase {
 		vector<int> quantums;
 		vector<int> quantumsActuales;
 		std::queue<pcb> cola;
+		unsigned int siguiente();
 		
 };
 
